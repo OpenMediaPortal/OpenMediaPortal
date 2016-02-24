@@ -1,6 +1,6 @@
 omp-nodejs:
     build: .
-    working_dir: /home/omp
+    working_dir: /omp
     environment:
         NODE_ENV: development
     ports:

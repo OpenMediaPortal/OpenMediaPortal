@@ -19,7 +19,11 @@ var Server = mongo.Server,
 /**
  * @const
  */
-var MUSICDB = 'musicdb';
+var OMPDB = 'omp';
+/**
+ * @const
+ */
+var MUSICCOL = 'musiccol';
 
 /**
  * Use docker image name as the hostname of the mongodb server
@@ -30,10 +34,10 @@ var db = new Db('omp', server);
 
 db.open(function(err, db) {
     if(!err) {
-        console.log("Connected to " + MUSICDB + " database");
-        db.collection(MUSICDB, {strict:true}, function(err, collection) {
+        console.log("Connected to " + OMPDB + " database");
+        db.collection(MUSICCOL, {strict:true}, function(err, collection) {
             if (err) {
-                console.log("The " + MUSICDB + " collection doesn't exist. Creating it with sample data...");
+                console.log("The " + MUSICCOL + " collection doesn't exist. Creating it with sample data...");
                 populateDB();
             }
         });
@@ -45,7 +49,7 @@ db.open(function(err, db) {
  *
  */
 exports.findAll = function(req, res) {
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.find().toArray(function(err, items) {
             res.send(items);
         });
@@ -60,7 +64,7 @@ exports.findAll = function(req, res) {
 exports.findById = function(req, res) {
     var id = req.params.id;
     console.log('Retrieving songs: ' + id);
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.findOne({'_id':new BSON.ObjectID(id)}, function(err, item) {
             res.send(item);
         });
@@ -75,7 +79,7 @@ exports.findById = function(req, res) {
 exports.addMusic = function(req, res) {
     var song = req.body;
     console.log('Adding song: ' + JSON.stringify(song));
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.insert(song, {safe:true}, function(err, result) {
             if (err) {
                 res.send({'error':'An error has occurred'});
@@ -97,7 +101,7 @@ exports.updateMusic = function(req, res) {
     var song = req.body;
     console.log('Updating song: ' + id);
     console.log(JSON.stringify(song));
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.update({'_id':new BSON.ObjectID(id)}, song, {safe:true}, function(err, result) {
             if (err) {
                 console.log('Error updating song: ' + err);
@@ -118,7 +122,7 @@ exports.updateMusic = function(req, res) {
 exports.deleteMusic = function(req, res) {
     var id = req.params.id;
     console.log('Deleting song: ' + id);
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.remove({'_id':new BSON.ObjectID(id)}, {safe:true}, function(err, result) {
             if (err) {
                 res.send({'error':'An error has occurred - ' + err});
@@ -157,7 +161,7 @@ var populateDB = function() {
         label: "Apple",
     }];
 
-    db.collection(MUSICDB, function(err, collection) {
+    db.collection(MUSICCOL, function(err, collection) {
         collection.insert(songs, {safe:true}, function(err, result) {});
     });
 

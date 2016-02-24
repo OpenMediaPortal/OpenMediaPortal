@@ -7,5 +7,12 @@
         "express": "4.x",
         "morgan": "1.x",
         "mongodb": "2.x"
+    },
+	"devDependencies":{
+        "mocha": "2.x",
+        "supertest": "1.x"
+    },
+    "scripts": {
+        "test": "./node_modules/mocha/bin/mocha"
     }
 }

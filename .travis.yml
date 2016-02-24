@@ -1,0 +1,25 @@
+sudo: required
+
+language: node_js
+node_js:
+    - node
+
+services:
+    - docker
+
+branches:
+    except:
+        - gh-pages
+
+before_script:
+    - docker-compose build
+    - docker-compose up -d
+    - npm install --dev
+
+script:
+    - docker ps | grep omp-nodejs
+    - docker ps | grep omp-mongo
+    - npm test
+
+after_script:
+    - docker-compose down
