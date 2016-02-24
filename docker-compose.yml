@@ -1,0 +1,15 @@
+omp-nodejs:
+    build: .
+    working_dir: /home/omp
+    environment:
+        NODE_ENV: development
+    ports:
+        - "3000:3000"
+    links:
+        - omp-mongo
+
+omp-mongo:
+    image: mongo
+    command: --smallfiles
+    ports:
+        - "27017:27017"
