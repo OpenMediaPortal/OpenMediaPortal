@@ -1,0 +1,83 @@
+#!/bin/sh
+# @author ojourmel
+
+LIBRARYPATH=/srv/data
+PROJECTROOT=.
+
+
+##### # Select the API (backend) implementation
+BACKEND=omp-express-mongo-api
+
+##### # Select the frontend implementation
+FRONTEND=omp-riot-ui
+
+## Verify code is here - updating is your responsibility
+## If you want ssl copies of the repo, clone them yourself
+if [ ! -d $BACKEND ] ; then
+    echo "!^!^!^!"
+    echo "WARNING: Cloning a HTTPS copy of $BACKEND"
+    echo "!^!^!^!"
+    git clone https://github.com/OpenMediaPortal/$BACKEND $PROJECTROOT/$BACKEND
+fi
+
+if [ ! -d $FRONTEND ] ; then
+    echo "!^!^!^!"
+    echo "WARNING: Cloning a HTTPS copy of $FRONTEND"
+    echo "!^!^!^!"
+    git clone https://github.com/OpenMediaPortal/$FRONTEND $PROJECTROOT/$FRONTEND
+fi
+
+
+
+#### # Dynamically build the docker-compose file
+DOCKERCOMPOSE="docker-compose.yml"
+if [ -f $DOCKERCOMPOSE ] ; then
+    mv $DOCKERCOMPOSE $DOCKERCOMPOSE.bck
+fi
+touch $DOCKERCOMPOSE
+
+if [ $BACKEND = "omp-express-mongo-api" ] ; then
+cat >> $DOCKERCOMPOSE << EOL
+
+omp-express-mongo-api:
+    build: $PROJECTROOT/omp-express-mongo-api
+    working_dir: /omp
+    volumes:
+        - $LIBRARYPATH:/srv/data/:rw
+        - $PROJECTROOT/omp-express-mongo-api/:/omp/:rw
+    environment:
+        NODE_ENV: development
+    ports:
+        - "8001:8001"
+    links:
+        - omp-mongo
+    command: npm start
+
+omp-mongo:
+    image: mongo
+    volumes:
+        - $PROJECTROOT/omp-express-mongo-api/data/:/data/db/:rw
+    expose:
+        - "27017"
+    command: --smallfiles
+
+EOL
+fi
+
+if [ $FRONTEND = "omp-riot-ui" ] ; then
+cat >> $DOCKERCOMPOSE << EOL
+
+omp-mongoose-server:
+    build: $PROJECTROOT/mongoose
+    working_dir: /omp
+    volumes:
+        - $PROJECTROOT/omp-riot-ui/:/omp/omp-riot-ui/:ro
+    environment:
+        DOCUMENTROOT: $FRONTEND
+    ports:
+        - "8000:8000"
+    command: ./mongoose/server
+
+EOL
+fi
+

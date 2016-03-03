@@ -1,4 +1,6 @@
-omp-express-mongo-api
-omp-riot-ui
-docker-compose.yml
-docker-compose.yml.bck
+# Ignore /everything/ in this repo
+# Force add the things that matter
+
+# Just be carefuly about /what/ you force add back in...
+
+*
