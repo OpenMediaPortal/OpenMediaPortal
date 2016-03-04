@@ -15,10 +15,10 @@ static const struct mg_str player_movies = MG_STR("/player/movies");
 static const struct mg_str player_photos = MG_STR("/player/photos");
 
 static const struct mg_str player_home_suffix = MG_STR("/home.html");
-static const struct mg_str player_music_suffix = MG_STR("/music.html");
-static const struct mg_str player_tv_suffix = MG_STR("/tv.html");
-static const struct mg_str player_movies_suffix = MG_STR("/movies.html");
-static const struct mg_str player_photos_suffix = MG_STR("/photos.html");
+static const struct mg_str player_music_suffix = MG_STR(".html");
+static const struct mg_str player_tv_suffix = MG_STR(".html");
+static const struct mg_str player_movies_suffix = MG_STR(".html");
+static const struct mg_str player_photos_suffix = MG_STR(".html");
 
 // mg_str helper functions
 static int is_equal(const struct mg_str *s1, const struct mg_str *s2) {
@@ -94,7 +94,7 @@ int main(void) {
   s_http_server_opts.document_root = doc_root;
   s_http_server_opts.enable_directory_listing = "no";
 
-  fprintf(stderr, "Starting web server on port %s\n", s_http_port);
+  fprintf(stderr, "Serving %s on port %s\n", doc_root, s_http_port);
   for (;;) {
     mg_mgr_poll(&mgr, 1000);
   }
