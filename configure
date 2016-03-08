@@ -47,6 +47,7 @@ omp-express-mongo-api:
         - $PROJECTROOT/omp-express-mongo-api/package.json:/omp/package.json:rw
         - $PROJECTROOT/omp-express-mongo-api/server.js:/omp/server.js:rw
         - $PROJECTROOT/omp-express-mongo-api/routes/:/omp/routes/:rw
+        - $PROJECTROOT/omp-express-mongo-api/dao/:/omp/dao/:rw
     environment:
         NODE_ENV: development
         NODE_PATH: /usr/local/lib/node_modules/$BACKEND/node_modules/
