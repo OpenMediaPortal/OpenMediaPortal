@@ -3,6 +3,7 @@
 
 LIBRARYPATH=/srv/data
 PROJECTROOT=.
+LIBRARYROOT=/srv/data/ # Where the library will be mounted on the data container
 
 
 ##### # Select the API (backend) implementation
@@ -36,6 +37,16 @@ if [ -f $DOCKERCOMPOSE ] ; then
 fi
 touch $DOCKERCOMPOSE
 
+## Add the data docker container
+cat >> $DOCKERCOMPOSE << EOL
+omp-data:
+    image: alpine
+    volumes:
+        - $LIBRARYPATH:$LIBRARYROOT:rw
+    entrypoint: /bin/sh
+
+EOL
+
 if [ $BACKEND = "omp-express-mongo-api" ] ; then
 cat >> $DOCKERCOMPOSE << EOL
 
@@ -43,14 +54,15 @@ omp-express-mongo-api:
     build: $PROJECTROOT/omp-express-mongo-api
     working_dir: /omp
     volumes:
-        - $LIBRARYPATH:/srv/data/:rw
         - $PROJECTROOT/omp-express-mongo-api/package.json:/omp/package.json:rw
         - $PROJECTROOT/omp-express-mongo-api/server.js:/omp/server.js:rw
         - $PROJECTROOT/omp-express-mongo-api/routes/:/omp/routes/:rw
         - $PROJECTROOT/omp-express-mongo-api/dao/:/omp/dao/:rw
+    volumes_from:
+        - omp-data
     environment:
+        LIBRARY_ROOT: $LIBRARYROOT
         NODE_ENV: development
-        NODE_PATH: /usr/local/lib/node_modules/$BACKEND/node_modules/
     ports:
         - "8001:8001"
     links:
