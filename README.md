@@ -46,7 +46,9 @@ A generic [Mongoose](https://github.com/cesanta/mongoose/) server is used to ser
 
 This project uses the `configure` script to create an appropriate `docker-compose.yml` file. This depends on valid `Dockerfile`s existing in each backend's repository. The frontend code is severed by a standard Mongoose Dockerfile.
 
-The current `LIBRARYPATH` defaults to `/srv/data`, but can be changed in the `configure` script. Similarly, the default backend and frontend code is given by:
+Additionally, `omp-config.yml` contains the main configuration options. This is read by not only the back and front ends, but the `configure` script when it builds `docker-compose.yml`.
+
+The default backend and frontend code is given by:
    * `BACKEND=omp-express-mongo-api`
    * `FRONTEND=omp-riot-ui`
 

@@ -1,10 +1,69 @@
 #!/bin/sh
 # @author ojourmel
 
-LIBRARYPATH=/srv/data
+CONFIGFILE=./omp-config.yml
 PROJECTROOT=.
-LIBRARYROOT=/srv/data/ # Where the library will be mounted on the data container
+LIBRARYROOT=/srv/data # Where the library will be mounted on the data container
 
+## ===========================================================================
+## ===========================================================================
+## ===========================================================================
+
+# Parse YML config file. This is fairly difficult to do in vanilla sh. Use hardcoded
+# assumptions as to the format of the config file. Because sed works primarily on
+# a single line basis, and perl and other solutions are not usable as the number
+# of dependencies should be minimized, the line number of keys will be tracked
+# to identify their hierarchy
+
+# Note that most of this is unnecessary as all we will need is the LIBPATHS
+# It's nice to know we have this information in configure though...
+
+INDENT=4
+
+# API PORT
+APIPORT=$(sed -rn "s/api_port: ([[:digit:]])/\1/p" $CONFIGFILE)
+
+# Grab all first, second, and third level entries, along with their line numbers
+KEYS=($(sed -rn "s/^([[:alpha:]_]+):.*/\1/p" $CONFIGFILE))
+KEYLINES=($(sed -rn "/^([[:alpha:]_]+):.*/=" $CONFIGFILE))
+LIBRARIES=($(sed -rn "s/^ {$INDENT}([[:alpha:]_]+):.*/\1/p" $CONFIGFILE))
+LIBRARYLINES=($(sed -rn "/^ {$INDENT}([[:alpha:]_]+):.*/=" $CONFIGFILE))
+LIBMIMES=($(sed -rn "s/^ {$INDENT} {$INDENT}libmime: ([[:alpha:]'\"])/\1/p" $CONFIGFILE))
+LIBMIMELINES=($(sed -rn "/^ {$INDENT} {$INDENT}libmime: ([[:alpha:]'\"])/=" $CONFIGFILE))
+LIBPATHS=($(sed -rn "s/^ {$INDENT} {$INDENT} {$INDENT}- ([[:alpha:]\/])/\1/p" $CONFIGFILE))
+LIBPATHLINES=($(sed -rn "/^ {$INDENT} {$INDENT} {$INDENT}- ([[:alpha:]\/])/=" $CONFIGFILE))
+
+for (( k=0; k<${#KEYS[*]}; k++ ))
+do
+    for (( l=0; l<${#LIBRARIES[*]}; l++ ))
+    do
+        # Match the library (music/photos/etc) to the key (api_port, library)
+        if [[ ${LIBRARYLINES[$l]} -gt ${KEYLINES[$k]} && ${LIBRARYLINES[$l]} -lt ${KEYLINES[(($k+1))]} ]]; then
+
+            # Match the mime type to the library
+            for (( m=0; m<${#LIBMIMES[*]}; m++ ))
+            do
+                if [[ ${LIBMIMELINES[$m]} -gt ${LIBRARYLINES[$l]} ]] && [[ ${LIBMIMELINES[$m]} -lt ${LIBRARYLINES[(($l+1))]} || $(($l+1)) -ge ${#LIBRARIES[*]} ]]; then
+                    declare ${KEYS[$k]}_${LIBRARIES[$l]}_libmime=${LIBMIMES[$m]}
+                fi
+            done
+
+            # Match the lib paths to the library
+            for (( p=0; p<${#LIBPATHS[*]}; p++ ))
+            do
+                if [[ ${LIBPATHLINES[$p]} -gt ${LIBRARYLINES[$l]} ]] && [[ ${LIBPATHLINES[$p]} -lt ${LIBRARYLINES[(($l+1))]} || $(($l+1)) -ge ${#LIBRARIES[*]} ]]; then
+                    declare ${KEYS[$k]}_${LIBRARIES[$l]}_libpath[$p]=${LIBPATHS[$p]}
+                fi
+            done
+        fi
+    done
+done
+
+# Variables like library_music_libmime=audio have now been created.
+
+## ===========================================================================
+## ===========================================================================
+## ===========================================================================
 
 ##### # Select the API (backend) implementation
 BACKEND=omp-express-mongo-api
@@ -28,6 +87,9 @@ if [ ! -d $FRONTEND ] ; then
     git clone https://github.com/OpenMediaPortal/$FRONTEND $PROJECTROOT/$FRONTEND
 fi
 
+## ===========================================================================
+## ===========================================================================
+## ===========================================================================
 
 
 #### # Dynamically build the docker-compose file
@@ -38,14 +100,24 @@ fi
 touch $DOCKERCOMPOSE
 
 ## Add the data docker container
+# First add the boiler plate
+# Then add the volumes
+
 cat >> $DOCKERCOMPOSE << EOL
 omp-data:
     image: alpine
-    volumes:
-        - $LIBRARYPATH:$LIBRARYROOT:rw
     entrypoint: /bin/sh
-
+    volumes:
 EOL
+
+# Loop over the libpaths and simply add them
+# We don't care about what library they belong to right now
+for (( p=0; p<${#LIBPATHS[*]}; p++ ))
+do
+cat >> $DOCKERCOMPOSE << EOL
+        - ${LIBPATHS[$p]}:$LIBRARYROOT${LIBPATHS[$p]}:ro
+EOL
+done
 
 if [ $BACKEND = "omp-express-mongo-api" ] ; then
 cat >> $DOCKERCOMPOSE << EOL
@@ -56,15 +128,17 @@ omp-express-mongo-api:
     volumes:
         - $PROJECTROOT/omp-express-mongo-api/package.json:/omp/package.json:rw
         - $PROJECTROOT/omp-express-mongo-api/server.js:/omp/server.js:rw
+        - $PROJECTROOT/omp-express-mongo-api/config.js:/omp/config.js:rw
         - $PROJECTROOT/omp-express-mongo-api/routes/:/omp/routes/:rw
         - $PROJECTROOT/omp-express-mongo-api/dao/:/omp/dao/:rw
+        - $PROJECTROOT/omp-config.yml/:/omp/omp-config.yml:rw
     volumes_from:
         - omp-data
     environment:
         LIBRARY_ROOT: $LIBRARYROOT
         NODE_ENV: development
     ports:
-        - "8001:8001"
+        - "$APIPORT:$APIPORT"
     links:
         - omp-mongo
     command: npm start
@@ -96,4 +170,3 @@ omp-mongoose-server:
 
 EOL
 fi
-
