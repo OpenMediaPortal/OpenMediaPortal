@@ -9,18 +9,7 @@ static struct mg_serve_http_opts s_http_server_opts;
 
 // Define the static "endpoints"
 static const struct mg_str root = MG_STR("");
-static const struct mg_str player_home = MG_STR("/player");
-static const struct mg_str player_music = MG_STR("/player/music");
-static const struct mg_str player_tv = MG_STR("/player/tv");
-static const struct mg_str player_movies = MG_STR("/player/movies");
-static const struct mg_str player_photos = MG_STR("/player/photos");
-
-static const struct mg_str root_suffix = MG_STR("/player/home.html");
-static const struct mg_str player_home_suffix = MG_STR("/home.html");
-static const struct mg_str player_music_suffix = MG_STR(".html");
-static const struct mg_str player_tv_suffix = MG_STR(".html");
-static const struct mg_str player_movies_suffix = MG_STR(".html");
-static const struct mg_str player_photos_suffix = MG_STR(".html");
+static const struct mg_str root_suffix = MG_STR("/omp.html");
 
 // mg_str helper functions
 static int is_equal(const struct mg_str *s1, const struct mg_str *s2) {
@@ -53,19 +42,9 @@ static void ev_handler(struct mg_connection *nc, int ev, void *p) {
       hm->uri = uri;
     }
 
-    // Append .html to any of the static endpoints
+    // Route root to main app entrypoint
     if (is_equal(&hm->uri, &root)) {
       uri_append(hm, root_suffix);
-    } else if (is_equal(&hm->uri, &player_home)) {
-      uri_append(hm, player_home_suffix);
-    } else if (is_equal(&hm->uri, &player_music)) {
-      uri_append(hm, player_music_suffix);
-    } else if (is_equal(&hm->uri, &player_tv)) {
-      uri_append(hm, player_tv_suffix);
-    } else if (is_equal(&hm->uri, &player_movies)) {
-      uri_append(hm, player_movies_suffix);
-    } else if (is_equal(&hm->uri, &player_photos)) {
-      uri_append(hm, player_photos_suffix);
     }
 
     // Log the request

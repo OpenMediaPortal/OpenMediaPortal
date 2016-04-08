@@ -107,8 +107,13 @@ cat >> $DOCKERCOMPOSE << EOL
 omp-data:
     image: alpine
     entrypoint: /bin/sh
+EOL
+
+if (( ${#LIBPATHS[*]}>0 )) ; then
+cat >> $DOCKERCOMPOSE << EOL
     volumes:
 EOL
+fi
 
 # Loop over the libpaths and simply add them
 # We don't care about what library they belong to right now
@@ -150,23 +155,33 @@ omp-mongo:
     expose:
         - "27017"
     command: --smallfiles
-
 EOL
 fi
+
+# Add front-end data container
 
 if [ $FRONTEND = "omp-riot-ui" ] ; then
 cat >> $DOCKERCOMPOSE << EOL
 
+omp-riot-ui:
+    build: $PROJECTROOT/omp-riot-ui
+    working_dir: /omp
+    volumes:
+        - $PROJECTROOT/omp-riot-ui/gulpfile.js:/omp/gulpfile.js:ro
+        - $PROJECTROOT/omp-riot-ui/package.json:/omp/package.json:ro
+        - $PROJECTROOT/omp-riot-ui/build:/omp/build:rw
+        - $PROJECTROOT/omp-riot-ui/src:/omp/src:ro
+    command: npm run automate
+
 omp-mongoose-server:
     build: $PROJECTROOT/mongoose
     working_dir: /omp
-    volumes:
-        - $PROJECTROOT/omp-riot-ui/:/omp/omp-riot-ui/:ro
+    volumes_from:
+        - omp-riot-ui
     environment:
-        DOCUMENTROOT: $FRONTEND/static
+        DOCUMENTROOT: /omp/build
     ports:
         - "8000:8000"
     command: ./mongoose/server
-
 EOL
 fi
