@@ -94,9 +94,7 @@ fi
 
 #### # Dynamically build the docker-compose file
 DOCKERCOMPOSE="docker-compose.yml"
-if [ -f $DOCKERCOMPOSE ] ; then
-    mv $DOCKERCOMPOSE $DOCKERCOMPOSE.bck
-fi
+rm -f $DOCKERCOMPOSE
 touch $DOCKERCOMPOSE
 
 ## Add the data docker container
@@ -173,15 +171,15 @@ omp-riot-ui:
         - $PROJECTROOT/omp-riot-ui/src:/omp/src:ro
     command: npm run automate
 
-omp-mongoose-server:
-    build: $PROJECTROOT/mongoose
+omp-nginx-server:
+    build: $PROJECTROOT/nginx
     working_dir: /omp
     volumes_from:
         - omp-riot-ui
     environment:
         DOCUMENTROOT: /omp/build
     ports:
-        - "8000:8000"
-    command: ./mongoose/server
+        - "8000:80"
+
 EOL
 fi
