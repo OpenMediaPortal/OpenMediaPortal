@@ -9,7 +9,7 @@ In principal, a simple RESTful server and responsive web app for accessing a fil
 
 This generic API can be implemented and consumed by many different different front and back ends. This API is documented here:
 
-`TODO`
+   * [Version 1](https://github.com/OpenMediaPortal/OpenMediaPortal/blob/master/api.md)
 
 ---
 
