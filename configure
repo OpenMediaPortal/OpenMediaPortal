@@ -4,6 +4,7 @@
 CONFIGFILE=./omp-config.yml
 PROJECTROOT=.
 LIBRARYROOT=/srv/data # Where the library will be mounted on the data container
+ENVIRONMENT=development
 
 ## ===========================================================================
 ## ===========================================================================
@@ -68,8 +69,9 @@ done
 ##### # Select the API (backend) implementation
 BACKEND=omp-express-mongo-api
 
-##### # Select the frontend implementation
+##### # Select *one of* the frontend implementation
 FRONTEND=omp-riot-ui
+#FRONTEND=omp-react-ui
 
 ## Verify code is here - updating is your responsibility
 ## If you want ssl copies of the repo, clone them yourself
@@ -139,7 +141,7 @@ omp-express-mongo-api:
         - omp-data
     environment:
         LIBRARY_ROOT: $LIBRARYROOT
-        NODE_ENV: development
+        NODE_ENV: $ENVIRONMENT
     ports:
         - "$APIPORT:$APIPORT"
     links:
@@ -169,6 +171,8 @@ omp-riot-ui:
         - $PROJECTROOT/omp-riot-ui/package.json:/omp/package.json:ro
         - $PROJECTROOT/omp-riot-ui/build:/omp/build:rw
         - $PROJECTROOT/omp-riot-ui/src:/omp/src:ro
+    environment:
+        NODE_ENV: $ENVIRONMENT
     command: npm run automate
 
 omp-nginx-server:
@@ -176,6 +180,34 @@ omp-nginx-server:
     working_dir: /omp
     volumes_from:
         - omp-riot-ui
+    environment:
+        DOCUMENTROOT: /omp/build
+    ports:
+        - "8000:80"
+
+EOL
+fi
+
+if [ $FRONTEND = "omp-react-ui" ] ; then
+cat >> $DOCKERCOMPOSE << EOL
+
+omp-react-ui:
+    build: $PROJECTROOT/omp-react-ui
+    working_dir: /omp
+    volumes:
+        - $PROJECTROOT/omp-react-ui/gulpfile.js:/omp/gulpfile.js:ro
+        - $PROJECTROOT/omp-react-ui/package.json:/omp/package.json:ro
+        - $PROJECTROOT/omp-react-ui/build:/omp/build:rw
+        - $PROJECTROOT/omp-react-ui/src:/omp/src:ro
+    environment:
+        NODE_ENV: $ENVIRONMENT
+    command: npm run automate
+
+omp-nginx-server:
+    build: $PROJECTROOT/nginx
+    working_dir: /omp
+    volumes_from:
+        - omp-react-ui
     environment:
         DOCUMENTROOT: /omp/build
     ports:

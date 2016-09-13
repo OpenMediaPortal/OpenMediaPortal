@@ -21,12 +21,13 @@ This generic API can be implemented and consumed by many different different fro
 #### Web App
 
 1. A [Riot](http://riotjs.com/) front consumes this API, with a focus on a responsive interface. This code can be found at [omp-riot-ui](https://github.com/OpenMediaPortal/omp-riot-ui).
+1. A [React](https://facebook.github.io/react/) front consumes this API. This code can be found at [omp-react-ui](https://github.com/OpenMediaPortal/omp-react-ui).
 
 ---
 
 #### Web Server
 
-A generic [Mongoose](https://github.com/cesanta/mongoose/) server is used to serve the static content found in the frontend repositories. Mongoose assumes the repository root is the document root of the website.
+A generic [nginx](http://nginx.org/en/) server is used to serve the static content found in the frontend repositories. Nginx assumes the document root of the website is the `build` folder of the front end repository.
 
 ## Installation and Running
 
@@ -44,13 +45,16 @@ A generic [Mongoose](https://github.com/cesanta/mongoose/) server is used to ser
 
 ## Configuring
 
-This project uses the `configure` script to create an appropriate `docker-compose.yml` file. This depends on valid `Dockerfile`s existing in each backend's repository. The frontend code is severed by a standard Mongoose Dockerfile.
+This project uses the `configure` script to create an appropriate `docker-compose.yml` file. This depends on valid `Dockerfile`s existing in each backend and frontend repository. The frontend code is severed by a standard Nginx Dockerfile.
 
 Additionally, `omp-config.yml` contains the main configuration options. This is read by not only the back and front ends, but the `configure` script when it builds `docker-compose.yml`.
 
 The default backend and frontend code is given by:
    * `BACKEND=omp-express-mongo-api`
    * `FRONTEND=omp-riot-ui`
+
+An alternative frontend can be selected by using:
+   * `FRONTEND=omp-react-ui`
 
 As more front and back end code becomes available, simply set these variables to the exact project/path name.
 
@@ -68,6 +72,7 @@ Please conform to each implementation's code standards. Additionally, `git` comm
 |---------|-------:|
 |`omp-express-mongo-api`|[![omp-express-mongo-api](https://travis-ci.org/OpenMediaPortal/omp-express-mongo-api.svg?branch=master)](https://travis-ci.org/OpenMediaPortal/omp-express-mongo-api) |
 |`omp-riot-ui`|[![omp-riot-ui](https://travis-ci.org/OpenMediaPortal/omp-riot-ui.svg?branch=master)](https://travis-ci.org/OpenMediaPortal/omp-riot-ui)|
+|`omp-react-ui`|[![omp-react-ui](https://travis-ci.org/OpenMediaPortal/omp-react-ui.svg?branch=master)](https://travis-ci.org/OpenMediaPortal/omp-react-ui)|
 
 Each API server is responsible for implementing unit tests to verify API endpoints.
 
