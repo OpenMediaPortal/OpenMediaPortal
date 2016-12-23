@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 # @author ojourmel
 
 CONFIGFILE=./omp-config.yml
@@ -124,6 +124,13 @@ cat >> $DOCKERCOMPOSE << EOL
 EOL
 done
 
+# Determin if we should "start" or "watch" yarn targets based on the environment
+if [ $ENVIRONMENT = "development" ] ; then
+	YARN_TARGET="yarn run watch"
+else
+	YARN_TARGET="yarn run start"
+fi
+
 if [ $BACKEND = "omp-express-mongo-api" ] ; then
 cat >> $DOCKERCOMPOSE << EOL
 
@@ -131,6 +138,7 @@ omp-express-mongo-api:
     build: $PROJECTROOT/omp-express-mongo-api
     working_dir: /omp
     volumes:
+        - $PROJECTROOT/omp-express-mongo-api/ecosystem.config.js:/omp/ecosystem.config.js:rw
         - $PROJECTROOT/omp-express-mongo-api/package.json:/omp/package.json:rw
         - $PROJECTROOT/omp-express-mongo-api/server.js:/omp/server.js:rw
         - $PROJECTROOT/omp-express-mongo-api/config.js:/omp/config.js:rw
@@ -146,7 +154,7 @@ omp-express-mongo-api:
         - "$APIPORT:$APIPORT"
     links:
         - omp-mongo
-    command: npm start
+    command: $YARN_TARGET
 
 omp-mongo:
     image: mongo
@@ -173,7 +181,7 @@ omp-riot-ui:
         - $PROJECTROOT/omp-riot-ui/src:/omp/src:ro
     environment:
         NODE_ENV: $ENVIRONMENT
-    command: npm run automate
+    command: $YARN_TARGET
 
 omp-nginx-server:
     build: $PROJECTROOT/nginx
@@ -201,7 +209,7 @@ omp-react-ui:
         - $PROJECTROOT/omp-react-ui/src:/omp/src:ro
     environment:
         NODE_ENV: $ENVIRONMENT
-    command: npm run automate
+    command: $YARN_TARGET
 
 omp-nginx-server:
     build: $PROJECTROOT/nginx
