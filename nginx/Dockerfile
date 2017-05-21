@@ -1,4 +1,4 @@
-FROM nginx
+FROM nginx:alpine
 
 RUN mkdir -p /omp/
 WORKDIR /omp
