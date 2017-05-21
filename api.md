@@ -43,7 +43,8 @@
 | 200 | `{ "libkey": { "libmime": "", "libpath": [] } }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/",
@@ -56,7 +57,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "music": {
@@ -125,7 +127,8 @@ $.ajax({
 | 415 | `{ "error": "Unsupported Media Type" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library",
@@ -140,7 +143,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "podcasts": {
@@ -182,7 +186,8 @@ $.ajax({
 | 415 | `{ "error": "Unsupported Media Type" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music",
@@ -197,7 +202,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "libmime": "audio",
@@ -238,7 +244,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music",
@@ -275,7 +282,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music?group=artist,album,title",
@@ -288,7 +296,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "group": [
@@ -367,7 +376,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music/57d85c655ee7711200250df0",
@@ -380,7 +390,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "_id": "57d85c655ee7711200250df0",
@@ -426,7 +437,8 @@ $.ajax({
 | 415 | `{ "error": "Unsupported Media Type" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music",
@@ -441,7 +453,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "_id": "57d85ebe5ee7711200250e00",
@@ -483,7 +496,8 @@ $.ajax({
 | 415 | `{ "error": "Unsupported Media Type" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music/57d85ebe5ee7711200250e00",
@@ -498,7 +512,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "_id": "57d85ebe5ee7711200250e00",
@@ -540,7 +555,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/library/music/57d85ebe5ee7711200250e00",
@@ -575,7 +591,8 @@ $.ajax({
 | 200 | `[ { "_id": "", "library": "", "lastSynced": "", "status": { "syncing": false, "syncTime": 0, "totalFiles": 0 } } ]` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/sync",
@@ -588,7 +605,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 [
   {
@@ -633,7 +651,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/sync/music",
@@ -646,7 +665,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "_id": "57d85c655ee7711200250d95",
@@ -692,7 +712,8 @@ $.ajax({
 | 409 | `{ "_id": "", "library": "", "lastSynced": "", "status": { "syncing": true, "syncTime": 0, "totalFiles": 0 } }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/sync/music",
@@ -705,7 +726,8 @@ $.ajax({
 </details>
 
 <details>
-<summary>**Sample Response**</summary>
+<summary><strong>Sample Response</strong></summary>
+
 ```json
 {
   "_id": "57d85c655ee7711200250d95",
@@ -750,7 +772,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/sync",
@@ -792,7 +815,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
 $.ajax({
   url: "/sync/music",
@@ -828,7 +852,7 @@ $.ajax({
 #### Success Response
 | Code | Body |
 | :--- | :--- |
-| 204 | Binary Data |
+| 200 | Binary Data |
 
 #### Error Response
 | Code | Body |
@@ -836,7 +860,8 @@ $.ajax({
 | 404 | `{ "error": "Not Found" }` |
 
 <details>
-<summary>**Sample Call**</summary>
+<summary><strong>Sample Call</strong></summary>
+
 ```javascript
   var audio = $("<audio controls/>");
   audio.src = "/stream/57d85c655ee7711200250df0";
